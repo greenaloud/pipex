@@ -6,7 +6,7 @@
 /*   By: wocho <wocho@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/27 20:31:14 by wocho             #+#    #+#             */
-/*   Updated: 2022/03/01 17:12:29 by wocho            ###   ########.fr       */
+/*   Updated: 2022/03/02 02:05:38 by wocho            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,18 +48,58 @@ static void	check_fd(int fd, char *proc, char *target)
 		exit(EXIT_FAILURE);
 	}
 	return ;
-}	
+}
 
-int	main(int ac, char *av[], char *env[])
+static void	process_error(char *s)
 {
-	int		ifd;
-	int		ofd;
+	perror(s);
+	exit(EXIT_FAILURE);
+}
 
-	ifd = open(av[1], O_RDONLY);
-	check_fd(ifd, ft_strrchr(av[0], '/') + 1, av[1]);
-	ofd = open(av[ac - 1], O_RDWR | O_CREAT | O_TRUNC, 0644);
-	check_fd(ofd, ft_strrchr(av[0], '/') + 1, av[ac - 1]);
+static void	process_child(char *argv, char **envp, char **paths, int pfd[2])
+{
+	int	ofd;
 
-	logic(ifd, ofd, av, env);
+	ofd = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (ofd == -1)
+		process_error("open");
+	dup2(pfd[1], STDOUT_FILENO);
+	dup2(ofd, STDIN_FILENO);
+	close(pfd[0]);
+	close(ofd);
+	call_execve();
+}
+
+static char	**get_paths(char **envp)
+{
+	char	*path_line;
+	char	**paths;
+
+	path_line = NULL;
+	while (!path_line && *envp)
+	{
+		path_line = ft_strnstr(*envp, "PATH=", 5);
+		if (path_line)
+			break ;
+	}
+	return (ft_split(path_line + 5, ':'));
+}
+
+int	main(int argc, char *argv[], char *envp[])
+{
+	int		status;
+	int		pfd[2];
+	int		filefd[2];
+	char	**paths;
+
+	if (argc != 5)
+		exit(EXIT_FAILURE);
+	if (pipe(pfd) == -1)
+		process_error("pipe");
+	filefd[0] = open(argv[1], O_RDONLY);
+	// exception
+	filefd[1] = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	// exception
+	execute_child(
 	return (0);
 }

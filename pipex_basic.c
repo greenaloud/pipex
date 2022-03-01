@@ -1,37 +1,69 @@
 #include "pipex.h"
 #include "util.c"
 
+static char	*join_command(char *path, char *bin)
+{
+	char	*result;
+	size_t	len;
+
+	len = 1;
+	len += ft_strlen(path) + ft_strlen(bin);
+	result = malloc(sizeof (char) * (len + 1));
+	strlcat(result, path);
+	strlcat(result, "/");
+	strlcat(result, bin);
+	return (result);
+}
+
 static char *make_path(char **path, char *arg)
 {
-	char	*temp;
 	char	*command;
-	char	**commands;
+	char	**del;
+	char	**args;
 
-	commands = ft_split(arg, ' ');
+	del = args;
+	args = ft_split(arg, ' ');
 	while (*path)
 	{
-		temp = ft_strjoin(*path, "/");
-		command = ft_strjoin(temp, commands[0]);
+		command = join_command(*path, args[0]);
 		free(temp);
 		if (access(command, F_OK) == 0)
 		{
-			// 2차원 포인터 내부의 1차원 포인터 해제 처리
+			while (*del)
+				free(*del++);
+			free(args);
 			free(commands);
 			return (command);
 		}
 		path++;
 		free(command);
 	}
-	// 2차원 포인터 내부의 1차원 포인터 해제 처리
+	while (*del)
+		free(*del++);
+	free(args);
 	free(commands);
 	return (NULL);
+}
+
+static char **get_paths(char **envp)
+{
+	char	*line;
+
+	line = NULL;
+	while (!line && *envp)
+	{
+		line = ft_strnstr(*envp, "PATH=", 5);
+		if (line)
+			break ;
+		envp++;
+	}
+	return (ft_split(line + 5, ':'));
 }
 
 static void	process_child(char *argv[], char *envp[], int pfd[2])
 {
 	int		idx;
 	int		fd1;
-	char	*paths;
 	char	**path;
 	char	*command;
 
@@ -42,11 +74,7 @@ static void	process_child(char *argv[], char *envp[], int pfd[2])
 	dup2(fd1, STDIN_FILENO);
 	close(pfd[0]);
 	close(fd1);
-	idx = 0;
-	paths = NULL;
-	while (!paths && envp[idx])
-		paths = ft_strnstr(envp[idx++], "PATH=", 5);
-	path = ft_split(paths + 5, ':');
+	path = get_paths(envp);
 	command = make_path(path, argv[2]);
 	if (command == NULL)
 		write(STDERR_FILENO, "command not found\n", 20);
@@ -105,10 +133,7 @@ int	main(int argc, char *argv[], char *envp[])
 		perror("fork");
 	else if (pid == 0)
 		process_child(argv, envp, pfd);
-	else
-	{
-		wait(&status);
-		process_parent(argv, envp, pfd);
-	}
+	wait(&status);
+	process_parent(argv, envp, pfd);
 	return (0);
 }
