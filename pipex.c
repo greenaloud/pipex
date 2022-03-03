@@ -11,95 +11,57 @@
 /* ************************************************************************** */
 
 #include "pipex.h"
-#include "util.c"
 
-static void	logic(int ifd, int ofd, char *av[], char *env[])
+static void	open_io(int iofd[2], char *infile, char *outfile)
 {
-	execve(
-	return ;
+	iofd[0] = open(infile, O_RDONLY);
+	if (iofd[0] == -1)
+		open_error(infile);
+	iofd[1] = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (iofd[1] == -1)
+		open_error(outfile);
 }
 
-static char	*make_err_msg(char *s1, char *s2, char *s3)
+static void execute_cmd(int	fd[2], char *arg, char **envp, char **paths)
 {
-	char	*result;
-	size_t	len;
+	char	*command;
+	char	**argv;
+	pid_t	pid;
 
-	len = 5;
-	len += ft_strlen(s1) + ft_strlen(s2) + ft_strlen(s3);
-	result = malloc(sizeof (*result) * (len + 1));
-	ft_strlcat(result, s1, len + 1);
-	ft_strlcat(result, ": ", len + 1);
-	ft_strlcat(result, s2, len + 1);
-	ft_strlcat(result, ": ", len + 1);
-	ft_strlcat(result, s3, len + 1);
-	ft_strlcat(result, "\n", len + 1);
-	return (result);
-}
-
-static void	check_fd(int fd, char *proc, char *target)
-{
-	char	*err_msg;
-
-	if (fd < 0)
+	pid = fork();
+	if (pid == -1)
+		error_exit("fork");
+	else if (pid == 0)
 	{
-		err_msg = make_err_msg(proc, strerror(errno), target); 
-		write(STDERR_FILENO, err_msg, ft_strlen(err_msg));
-		free(err_msg);
-		exit(EXIT_FAILURE);
+		// 인자를 파싱할 때 따옴표("~~", '~~')를 만난 경우를 추가적으로 처리해 주어야 한다.
+		argv = ft_split(arg, ' ');
+		command = get_command(paths, argv[0]);
+		dup2(fd[0], STDIN_FILENO);
+		dup2(fd[1], STDOUT_FILENO);
+		close(fd[1]);
+		if (execve(command, argv, envp) == -1)
+			error_exit("execve");
 	}
-	return ;
-}
-
-static void	process_error(char *s)
-{
-	perror(s);
-	exit(EXIT_FAILURE);
-}
-
-static void	process_child(char *argv, char **envp, char **paths, int pfd[2])
-{
-	int	ofd;
-
-	ofd = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (ofd == -1)
-		process_error("open");
-	dup2(pfd[1], STDOUT_FILENO);
-	dup2(ofd, STDIN_FILENO);
-	close(pfd[0]);
-	close(ofd);
-	call_execve();
-}
-
-static char	**get_paths(char **envp)
-{
-	char	*path_line;
-	char	**paths;
-
-	path_line = NULL;
-	while (!path_line && *envp)
-	{
-		path_line = ft_strnstr(*envp, "PATH=", 5);
-		if (path_line)
-			break ;
-	}
-	return (ft_split(path_line + 5, ':'));
+	wait(NULL);
 }
 
 int	main(int argc, char *argv[], char *envp[])
 {
-	int		status;
-	int		pfd[2];
-	int		filefd[2];
+	int		i;
+	int		fds[3][2];
 	char	**paths;
 
 	if (argc != 5)
-		exit(EXIT_FAILURE);
-	if (pipe(pfd) == -1)
-		process_error("pipe");
-	filefd[0] = open(argv[1], O_RDONLY);
-	// exception
-	filefd[1] = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	// exception
-	execute_child(
+		argc_error();
+	open_io(fds[0], argv[1], argv[argc - 1]);
+	if (pipe(fds[1]) == -1)
+		error_exit("pipe");
+	paths = get_paths(envp);
+	fds[2][0] = fds[0][0];
+	fds[2][1] = fds[1][1];
+	execute_cmd(fds[2], argv[2], envp, paths);
+	fds[2][0] = fds[1][0];
+	fds[2][1] = fds[0][1];
+	execute_cmd(fds[2], argv[3], envp, paths);
 	return (0);
 }

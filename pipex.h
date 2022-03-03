@@ -20,12 +20,14 @@
 # include <unistd.h>
 # include <sys/wait.h>
 # include <sys/errno.h>
+# include "libft/libft.h"
 
-# define INFILE		0
-# define OUTFILE	1
+void	error_exit(char *s);
+void	argc_error(void);
+char	*open_error(char *path);
 
-# ifndef BUF_SIZE
-#  define BUF_SIZE	1024
-# endif
+char	*get_command(char **paths, char *bin);
+char	*make_command(char *path, char *bin);
+char	**get_paths(char **envp);
 
 #endif
