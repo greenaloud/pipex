@@ -53,7 +53,6 @@ static int	execute(int rfd, char *arg, char **envp, char **paths)
 	}
 	close(pfd[1]);
 	wait(NULL);
-	// close(rfd);
 	return (pfd[0]);
 }
 
@@ -75,7 +74,6 @@ static void	execute_last(int rfd, char *arg, char **envp, char **paths)
 			error_exit("execve");
 	}
 	wait(NULL);
-	// close(rfd);
 }
 
 int	main(int argc, char *argv[], char *envp[])
