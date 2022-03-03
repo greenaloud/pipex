@@ -72,3 +72,20 @@ void	free_paths(char **paths)
 		free(paths[i++]);
 	free(paths);
 }
+
+void	open_io(char *infile, char *outfile)
+{
+    int	infd;
+    int	outfd;
+
+    infd = open(infile, O_RDONLY);
+    if (infd == -1)
+        open_error(infile);
+    outfd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (outfd == -1)
+        open_error(outfile);
+    dup2(infd, STDIN_FILENO);
+    dup2(outfd, STDOUT_FILENO);
+    close(infd);
+    close(outfd);
+}

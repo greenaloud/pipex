@@ -20,8 +20,9 @@ void	error_exit(char *s)
 
 void	argc_error(void)
 {
-	ft_putstr_fd("pipex: not enough arguments\n", STDERR_FILENO);
-	ft_putstr_fd("usage: pipex infile cmd1 cmd2 [...] outfile\n", STDERR_FILENO);
+	ft_putstr_fd("pipex: not enough arguments\n", 2);
+    ft_putstr_fd("usage: pipex infile cmd cmd [cmd...] outfile\n", 1);
+    ft_putstr_fd("       pipex here_doc LIMITER cmd cmd [cmd...] outfile\n", 1);
 	exit(EXIT_FAILURE);
 }
 

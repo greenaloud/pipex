@@ -30,5 +30,6 @@ char	*get_command(char **paths, char *bin);
 char	*make_command(char *path, char *bin);
 char	**get_paths(char **envp);
 void	free_paths(char **paths);
+void	open_io(char *infile, char *outfile);
 
 #endif

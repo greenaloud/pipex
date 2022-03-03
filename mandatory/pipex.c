@@ -78,7 +78,6 @@ static void	execute_last(int rfd, char *arg, char **envp, char **paths)
 
 int	main(int argc, char *argv[], char *envp[])
 {
-	int		paramfd[2];
 	int		fd_input;
 	char	**paths;
 
