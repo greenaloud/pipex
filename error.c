@@ -31,8 +31,7 @@ char	*open_error(char *path)
 	int		len;
 	char	*result;
 
-	len = 0;
-	len += strlen(strerror(errno)) + ft_strlen(path) + 10;
+	len = ft_strlen(strerror(errno)) + ft_strlen(path) + 10;
 	result = malloc(sizeof (*result) * (len + 1));
 	result[0] = '\0';
 	ft_strlcat(result, "pipex: ", len + 1);

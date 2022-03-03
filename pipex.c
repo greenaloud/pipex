@@ -38,7 +38,7 @@ static void execute_cmd(int	fd[2], char *arg, char **envp, char **paths)
 		command = get_command(paths, argv[0]);
 		dup2(fd[0], STDIN_FILENO);
 		dup2(fd[1], STDOUT_FILENO);
-		close(fd[1]);
+		close(fd[2]);
 		if (execve(command, argv, envp) == -1)
 			error_exit("execve");
 	}
@@ -48,20 +48,25 @@ static void execute_cmd(int	fd[2], char *arg, char **envp, char **paths)
 int	main(int argc, char *argv[], char *envp[])
 {
 	int		i;
-	int		fds[3][2];
+	int		iofd[2];
+	int		pipefd[2];
+	int		paramfd[3];
 	char	**paths;
 
 	if (argc != 5)
 		argc_error();
-	open_io(fds[0], argv[1], argv[argc - 1]);
-	if (pipe(fds[1]) == -1)
+	open_io(iofd, argv[1], argv[argc - 1]);
+	if (pipe(pipefd) == -1)
 		error_exit("pipe");
 	paths = get_paths(envp);
-	fds[2][0] = fds[0][0];
-	fds[2][1] = fds[1][1];
-	execute_cmd(fds[2], argv[2], envp, paths);
-	fds[2][0] = fds[1][0];
-	fds[2][1] = fds[0][1];
-	execute_cmd(fds[2], argv[3], envp, paths);
+	paramfd[0] = iofd[0];
+	paramfd[1] = pipefd[1];
+	paramfd[2] = pipefd[0];
+	execute_cmd(paramfd, argv[2], envp, paths);
+	paramfd[0] = pipefd[0];
+	paramfd[1] = iofd[1];
+	paramfd[2] = pipefd[1];
+	perror("merong");
+	execute_cmd(paramfd, argv[3], envp, paths);
 	return (0);
 }
