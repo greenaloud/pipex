@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "pipex.h"
 
 void	error_exit(char *s)
@@ -26,7 +25,7 @@ void	argc_error(void)
 	exit(EXIT_FAILURE);
 }
 
-char	*open_error(char *path)
+void	open_error(char *path)
 {
 	int		len;
 	char	*result;

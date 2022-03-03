@@ -28,13 +28,11 @@ char	*make_command(char *path, char *bin)
 
 char	*get_command(char **paths, char *bin)
 {
-	int		i;
 	char	*command;
 
-	i = 0;
-	while (paths[i])
+	while (*paths)
 	{
-		command = make_command(paths[i], bin);
+		command = make_command(*paths, bin);
 		if (access(command, F_OK) == 0)
 		{
 			if (access(command, X_OK) == 0)
@@ -43,7 +41,7 @@ char	*get_command(char **paths, char *bin)
 			error_exit("access");
 		}
 		free(command);
-		i++;
+		paths++;
 	}
 	error_exit("access");
 	return (NULL);
@@ -63,4 +61,14 @@ char	**get_paths(char **envp)
 		envp++;
 	}
 	return (ft_split(path_line + 5, ':'));
+}
+
+void	free_paths(char **paths)
+{
+	int	i;
+
+	i = 0;
+	while (paths[i])
+		free(paths[i++]);
+	free(paths);
 }
