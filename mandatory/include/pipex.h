@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wocho <wocho@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: wocho <wocho@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/27 20:32:15 by wocho             #+#    #+#             */
-/*   Updated: 2022/03/01 14:14:55 by wocho            ###   ########.fr       */
+/*   Updated: 2022/03/04 11:59:53 by wocho            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,11 @@
 # define PIPEX_H
 
 # include <fcntl.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
 # include <unistd.h>
 # include <sys/wait.h>
-# include <sys/errno.h>
-# include "../libft/libft.h"
+# include "util.h"
+# include "error.h"
+# include "libft.h"
 
 void	error_exit(char *s);
 void	argc_error(void);

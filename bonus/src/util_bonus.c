@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util.c                                             :+:      :+:    :+:   */
+/*   util_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wocho <wocho@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: wocho <wocho@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/03/01 13:47:01 by wocho             #+#    #+#             */
-/*   Updated: 2022/03/01 18:26:16 by wocho            ###   ########.fr       */
+/*   Created: 2022/03/03 20:21:09 by wocho             #+#    #+#             */
+/*   Updated: 2022/03/04 12:01:53 by wocho            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "util_bonus.h"
 
 char	*make_command(char *path, char *bin)
 {
@@ -71,4 +71,21 @@ void	free_paths(char **paths)
 	while (paths[i])
 		free(paths[i++]);
 	free(paths);
+}
+
+void	open_io(char *infile, char *outfile)
+{
+	int	infd;
+	int	outfd;
+
+	infd = open(infile, O_RDONLY);
+	if (infd == -1)
+		open_error(infile);
+	outfd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (outfd == -1)
+		open_error(outfile);
+	dup2(infd, STDIN_FILENO);
+	dup2(outfd, STDOUT_FILENO);
+	close(infd);
+	close(outfd);
 }

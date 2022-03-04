@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wocho <wocho@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: wocho <wocho@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 20:21:05 by wocho             #+#    #+#             */
-/*   Updated: 2022/03/03 20:21:07 by wocho            ###   ########.fr       */
+/*   Updated: 2022/03/04 12:02:18 by wocho            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,13 @@
 # define PIPEX_BONUS_H
 
 # include <fcntl.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
 # include <unistd.h>
 # include <sys/wait.h>
-# include <sys/errno.h>
-# include "../libft/libft.h"
+# include "util_bonus.h"
+# include "error_bonus.h"
+# include "get_next_line_bonus.h"
+# include "libft.h"
 
-void	error_exit(char *s);
-void	argc_error(void);
-void	open_error(char *path);
-
-char	*get_command(char **paths, char *bin);
-char	*make_command(char *path, char *bin);
-char	**get_paths(char **envp);
-void	free_paths(char **paths);
-void	open_io(char *infile, char *outfile);
+int	main(int argc, char **argv, char **envp);
 
 #endif

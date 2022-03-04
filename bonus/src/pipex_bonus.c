@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wocho <wocho@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: wocho <wocho@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 20:20:48 by wocho             #+#    #+#             */
-/*   Updated: 2022/03/03 20:21:00 by wocho            ###   ########.fr       */
+/*   Updated: 2022/03/04 12:01:57 by wocho            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,19 +59,54 @@ static void	execute_last(int rfd, char *arg, char **envp, char **paths)
 	wait(NULL);
 }
 
-void    here_doc(int argc, char **argv, char **envp, char **paths)
+static int	pipe_stdin(char *limiter)
 {
-    int     i;
-    int     fd_input;
+	int		pfd[2];
+	char	*str;
+	pid_t	pid;
 
-    if (argc < 6)
-        argc_error();
-    fd_input
-    i = 3;
-    while (i < argc - 2)
-        fd_input = execute(fd_input, argv[i++], envp, paths);
-    execute_last(fd_input, argv[argc - 2], envp, paths);
-    free_paths(paths);
+	if (pipe(pfd) == -1)
+		error_exit("pipe");
+	pid = fork();
+	if (pid == -1)
+		error_exit("fork");
+	else if (pid == 0)
+	{
+		close(pfd[0]);
+		str = get_next_line(STDIN_FILENO);
+		while (str && ft_strncmp(str, limiter, ft_strlen(limiter)) != 0)
+		{
+			ft_putstr_fd(str, pfd[1]);
+			str = get_next_line(STDIN_FILENO);
+		}
+		if (str)
+			exit(EXIT_SUCCESS);
+		exit(EXIT_FAILURE);
+	}
+	close(pfd[1]);
+	wait(NULL);
+	return (pfd[0]);
+}
+
+static void	here_doc(int argc, char **argv, char **envp, char **paths)
+{
+	int		i;
+	int		outfile;
+	int		fd_input;
+
+	if (argc < 6)
+		argc_error();
+	outfile = open(argv[argc - 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (outfile == -1)
+		open_error(argv[argc - 1]);
+	dup2(outfile, STDOUT_FILENO);
+	close(outfile);
+	fd_input = pipe_stdin(argv[2]);
+	i = 3;
+	while (i < argc - 2)
+		fd_input = execute(fd_input, argv[i++], envp, paths);
+	execute_last(fd_input, argv[argc - 2], envp, paths);
+	free_paths(paths);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -84,10 +119,10 @@ int	main(int argc, char **argv, char **envp)
 		argc_error();
 	paths = get_paths(envp);
 	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
-    {
-        here_doc(argc, argv, envp, paths);
-        return (0);
-    }
+	{
+		here_doc(argc, argv, envp, paths);
+		return (0);
+	}
 	open_io(argv[1], argv[argc - 1]);
 	fd_input = STDIN_FILENO;
 	i = 2;

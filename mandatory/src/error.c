@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error_bonus.c                                      :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wocho <wocho@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: wocho <wocho@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/03/03 20:20:45 by wocho             #+#    #+#             */
-/*   Updated: 2022/03/03 20:20:57 by wocho            ###   ########.fr       */
+/*   Created: 2022/03/03 11:17:39 by wocho             #+#    #+#             */
+/*   Updated: 2022/03/04 12:00:04 by wocho            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex_bonus.h"
+#include "error.h"
 
 void	error_exit(char *s)
 {
@@ -20,9 +20,8 @@ void	error_exit(char *s)
 
 void	argc_error(void)
 {
-	ft_putstr_fd("pipex: not enough arguments\n", 2);
-    ft_putstr_fd("usage: pipex infile cmd cmd [cmd...] outfile\n", 1);
-    ft_putstr_fd("       pipex here_doc LIMITER cmd cmd [cmd...] outfile\n", 1);
+	ft_putstr_fd("pipex: not enough arguments\n", STDERR_FILENO);
+	ft_putstr_fd("usage: pipex infile cmd1 cmd2 outfile\n", STDERR_FILENO);
 	exit(EXIT_FAILURE);
 }
 
