@@ -22,13 +22,26 @@ BONUS_SRCS = $(addprefix bonus/src/, $(BONUS_SRCS_BASE))
 OBJS = $(SRCS:.c=.o)
 BONUS_OBJS = $(BONUS_SRCS:.c=.o)
 
-.c.o :
-	$(CC) $(CFLAGS) $(INC) -c $<
-
 all : $(NAME)
 
 $(NAME) : $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ libft.a
+
+.c.o :
+	$(CC) $(CFLAGS) $(INC) -c $< -o $@
+
+bonus :
+	make "OBJS = $(BONUS_OBJS)" all
+
+clean :
+	rm -f $(OBJS) $(BONUS_OBJS)
+
+fclean : clean
+	rm -f $(NAME)
+
+re : fclean all
+
+.PHONY : all bonus clean fclean re
 
 # Dependency List
 

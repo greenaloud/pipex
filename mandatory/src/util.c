@@ -50,7 +50,6 @@ char	*get_command(char **paths, char *bin)
 char	**get_paths(char **envp)
 {
 	char	*path_line;
-	char	**paths;
 
 	path_line = NULL;
 	while (!path_line && *envp)
