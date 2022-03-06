@@ -30,29 +30,29 @@ static int	get_arg_len(char *str)
 	return (len);
 }
 
-static int  get_arg_count(char *arg)
+static int	get_arg_count(char *arg)
 {
-	int idx;
-	int cnt;
+	int	idx;
+	int	cnt;
 
 	idx = 0;
 	cnt = 0;
 	while (arg[idx])
-    {
-        while (arg[idx] == ' ')
-            idx++;
-        if (arg[idx])
-        {
+	{
+		while (arg[idx] == ' ')
+			idx++;
+		if (arg[idx])
+		{
 			idx += get_arg_len(arg + idx);
-            cnt++;
-        }
-    }
+			cnt++;
+		}
+	}
 	return (cnt);
 }
 
 static char	*fill_arg(char *arg, int lt, int rt)
 {
-	int 	idx;
+	int		idx;
 	char	*str;
 
 	if (arg[lt] == '\'' || arg[lt] == '\"')
@@ -70,10 +70,10 @@ static char	*fill_arg(char *arg, int lt, int rt)
 	return (str);
 }
 
-static int split(char **lst, char *arg)
+static int	split(char **lst, char *arg)
 {
-	int lt;
-	int rt;
+	int	lt;
+	int	rt;
 
 	lt = 0;
 	rt = 0;
@@ -94,14 +94,14 @@ static int split(char **lst, char *arg)
 	return (1);
 }
 
-char    **split_arg(char *arg)
+char	**split_arg(char *arg)
 {
-	int 	idx;
-    int     cnt;
-	int 	flag;
-    char    **result;
+	int		idx;
+	int		cnt;
+	int		flag;
+	char	**result;
 
-    cnt = get_arg_count(arg);
+	cnt = get_arg_count(arg);
 	result = malloc(sizeof (*result) * (cnt + 1));
 	if (result == NULL)
 		return (NULL);
