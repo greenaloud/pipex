@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   args.c                                             :+:      :+:    :+:   */
+/*   args_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wocho <wocho@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/03/06 13:07:26 by wocho             #+#    #+#             */
-/*   Updated: 2022/03/06 13:07:28 by wocho            ###   ########.fr       */
+/*   Created: 2022/03/06 13:07:02 by wocho             #+#    #+#             */
+/*   Updated: 2022/03/06 13:07:20 by wocho            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,15 +38,15 @@ static int  get_arg_count(char *arg)
 	idx = 0;
 	cnt = 0;
 	while (arg[idx])
-    {
-        while (arg[idx] == ' ')
-            idx++;
-        if (arg[idx])
-        {
+	{
+		while (arg[idx] == ' ')
+			idx++;
+		if (arg[idx])
+		{
 			idx += get_arg_len(arg + idx);
-            cnt++;
-        }
-    }
+			cnt++;
+		}
+	}
 	return (cnt);
 }
 
@@ -97,11 +97,11 @@ static int split(char **lst, char *arg)
 char    **split_arg(char *arg)
 {
 	int 	idx;
-    int     cnt;
+	int     cnt;
 	int 	flag;
-    char    **result;
+	char    **result;
 
-    cnt = get_arg_count(arg);
+	cnt = get_arg_count(arg);
 	result = malloc(sizeof (*result) * (cnt + 1));
 	if (result == NULL)
 		return (NULL);
