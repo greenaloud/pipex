@@ -43,7 +43,7 @@ static int	execute(int rfd, char *arg, char **envp, char **paths)
 		error_exit("fork");
 	else if (pid == 0)
 	{
-		argv = ft_split(arg, ' ');
+		argv = split_arg(arg);
 		command = get_command(paths, argv[0]);
 		dup2(rfd, STDIN_FILENO);
 		dup2(pfd[1], STDOUT_FILENO);
@@ -67,7 +67,7 @@ static void	execute_last(int rfd, char *arg, char **envp, char **paths)
 		error_exit("fork");
 	else if (pid == 0)
 	{
-		argv = ft_split(arg, ' ');
+		argv = split_arg(arg);
 		command = get_command(paths, argv[0]);
 		dup2(rfd, STDIN_FILENO);
 		if (execve(command, argv, envp) == -1)

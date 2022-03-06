@@ -19,6 +19,7 @@
 # include "util.h"
 # include "error.h"
 # include "libft.h"
+# include "args.h"
 
 void	error_exit(char *s);
 void	argc_error(void);
